@@ -1,20 +1,6 @@
 pipeline {
     agent any
     stages {
-        stage("Fix the permission issue") {
-            agent any
-            steps {
-                sh "sudo chown root:jenkins /var/run/docker.sock"
-            }
-        }
-        stage('Initialize'){
-            steps{
-                script{
-                    def dockerHome = tool 'myDocker'
-                    env.PATH = "${dockerHome}/bin:${env.PATH}"
-                }
-            }
-        }
         stage('Build') {
             steps {
                 echo 'Running build automation'
@@ -41,7 +27,7 @@ pipeline {
             }
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker_key') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
